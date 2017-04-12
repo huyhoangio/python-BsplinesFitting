@@ -47,12 +47,12 @@ def main():
                                                                 writer.writerows(bestBases)
                                                             return
     '''
-    upBound = [1.2 for i in range(len(B4))]
-    lowBound = [0 for i in range(len(B4))]
+    upBound = [1.2 for i in range(len(B4))]  # initial upper bound
+    lowBound = [0 for i in range(len(B4))]   # initial lower bound
 
 
     upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-    #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
+    upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
     #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
 
     ampedB4 = [[B4[y][x] * upBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
@@ -84,12 +84,20 @@ def findBoundaries(dataset, B4matrix, inputUpper, inputLower, inStep):
 
 def checkIfLarger(dataset, ampedBspline):
     #larger = False
-
+    startTimeForMeasuredData = min(dataset.iterkeys())
+    endTimeForMeasuredData = max(dataset.iterkeys())
     for i in range(len(ampedBspline)):
-        if ampedBspline[i] == 0 or i not in dataset:
+        if ampedBspline[i] == 0 or (i > startTimeForMeasuredData and i < endTimeForMeasuredData and i not in dataset):
             continue
         else:
-            if dataset.get(i) - ampedBspline[i] <= 0:
+            if i <= startTimeForMeasuredData:
+                pointToCompare = dataset.get(startTimeForMeasuredData)
+            elif i >= endTimeForMeasuredData:
+                pointToCompare = dataset.get(endTimeForMeasuredData)
+            else:
+                pointToCompare = dataset.get(i)
+
+            if pointToCompare - ampedBspline[i] <= 0:
                 return True
     return False
 
