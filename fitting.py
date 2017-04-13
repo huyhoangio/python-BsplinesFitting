@@ -54,7 +54,7 @@ def main():
 
                                                         currentFittedCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
                                                         currentError = calculateError(measuredData, currentFittedCurve);
-                                                        counter++
+                                                        counter = counter + 1
                                                         if currentError < minError:
                                                             counter = 0;
                                                             print('new error: ', minError)
@@ -62,13 +62,15 @@ def main():
                                                             fittedCurve = currentFittedCurve
                                                             bestBases = ampedB4
                                                             bestBases.append(fittedCurve)
-                                                            
+                                                            '''
                                                             with open("b4.csv", "wb") as file:
                                                                 writer = csv.writer(file)
                                                                 writer.writerows(bestBases)
+                                                            '''
+                                                        elif counter > 2000:
+                                                            exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
                                                             return
-                                                        elif counter > 1000:
-    
+
     exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
 
     return
@@ -181,7 +183,7 @@ def exportToFile(measuredData, upBound, lowBound, basis):
             file.write('\n')
     '''
     for i in range(len(basis[len(basis) - 1])):
-        file.write(basis[len(basis) - 1][i])
+        file.write(str(basis[len(basis) - 1][i]))
         file.write(',')
     file.write('\n')
     for i in range(len(upBound)):
