@@ -14,9 +14,10 @@ def main():
     upBound = [1.2 for i in range(len(B4))]  # initial upper bound
     lowBound = [0 for i in range(len(B4))]   # initial lower bound
 
+    step = 0.2;
 
     upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-    upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
+    #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
     #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
 
     ampedB4 = [[B4[y][x] * upBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
@@ -25,45 +26,51 @@ def main():
     ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
     lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
 
-    exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
-
-    bestBases = B4
-    fittedCurve = [sum(row[i] for row in B4) for i in range(len(B4[0]))]
-    #minError = calculateError(measuredData, fittedCurve);
-    step = 0.2;
     
-    for i1 in np.arange(0.0, 1.0, step):
-        for i2 in np.arange(0.0, 1.0, step):
+
+    bestBases = ampedB4
+    fittedCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
+    minError = calculateError(measuredData, fittedCurve);
+    
+    step = 0.01
+    counter = 0
+    for i1 in np.arange(lowBound[0], upBound[0], step):
+        for i2 in np.arange(lowBound[1], upBound[1], step):
             print('check point i2')
-            for i3 in np.arange(0.0, 1.0, step):
-                for i4 in np.arange(0.0, 1.0, step):
-                    for i5 in np.arange(0.0, 1.0, step):
-                        for i6 in np.arange(0.0, 1.0, step):
-                            for i7 in np.arange(0.0, 1.0, step):
-                                for i8 in np.arange(0.0, 1.0, step):
-                                    for i9 in np.arange(0.0, 1.0, step):
-                                        for i10 in np.arange(0.0, 1.0, step):
-                                            for i11 in np.arange(0.0, 1.0, step):
-                                                for i12 in np.arange(0.0, 1.0, step):
-                                                    for i13 in np.arange(0.0, 1.0, step):
+            for i3 in np.arange(lowBound[2], upBound[2], step):
+                for i4 in np.arange(lowBound[3], upBound[3], step):
+                    for i5 in np.arange(lowBound[4], upBound[4], step):
+                        for i6 in np.arange(lowBound[5], upBound[5], step):
+                            for i7 in np.arange(lowBound[6], upBound[6], step):
+                                for i8 in np.arange(lowBound[7], upBound[7], step):
+                                    for i9 in np.arange(lowBound[8], upBound[8], step):
+                                        for i10 in np.arange(lowBound[9], upBound[9], step):
+                                            for i11 in np.arange(lowBound[10], upBound[10], step):
+                                                for i12 in np.arange(lowBound[11], upBound[11], step):
+                                                    for i13 in np.arange(lowBound[12], upBound[12], step):
                                                         amp = [i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13];
                                                         #ampedB4 = multAmplitude(amp, B4);
                                                         ampedB4 = [[B4[y][x]*amp[y] for x in range(len(B4[0]))] for y in range(len(B4))]
 
                                                         currentFittedCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
                                                         currentError = calculateError(measuredData, currentFittedCurve);
-                                                        if currentError < 25.0:
-                                                            #print('new error: ', minError)
-                                                            #minError = currentError
+                                                        counter++
+                                                        if currentError < minError:
+                                                            counter = 0;
+                                                            print('new error: ', minError)
+                                                            minError = currentError #update minerror
                                                             fittedCurve = currentFittedCurve
                                                             bestBases = ampedB4
                                                             bestBases.append(fittedCurve)
-                                                            print("min error: ", minError)
+                                                            
                                                             with open("b4.csv", "wb") as file:
                                                                 writer = csv.writer(file)
                                                                 writer.writerows(bestBases)
                                                             return
+                                                        elif counter > 1000:
     
+    exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
+
     return
 
 def findBoundaries(dataset, B4matrix, inputUpper, inputLower, inStep):
@@ -159,7 +166,7 @@ def generatenextorderbasis(currentBasis, order, TC, T, numOfBases, maxCol):
 
 def exportToFile(measuredData, upBound, lowBound, basis):
     file = open('out.csv', 'w')
-
+    '''
     for i in range(len(upBound)):
         file.write(str(upBound[i]))
         if i != len(upBound) - 1:
@@ -172,6 +179,11 @@ def exportToFile(measuredData, upBound, lowBound, basis):
             file.write(',')
         else:
             file.write('\n')
+    '''
+    for i in range(len(basis[len(basis) - 1])):
+        file.write(basis[len(basis) - 1][i])
+        file.write(',')
+    file.write('\n')
     for i in range(len(upBound)):
         if i not in measuredData:
             file.write('')
