@@ -10,11 +10,28 @@ def main():
             measuredData[int(float(rows[0])*100)+100] = float(rows[1])
     #print(measuredData)
 
+    
+    upBound = [1.2 for i in range(len(B4))]  # initial upper bound
+    lowBound = [0 for i in range(len(B4))]   # initial lower bound
+
+
+    upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
+    upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
+    #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
+
+    ampedB4 = [[B4[y][x] * upBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
+    upperCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
+
+    ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
+    lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
+
+    exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
+
     bestBases = B4
     fittedCurve = [sum(row[i] for row in B4) for i in range(len(B4[0]))]
     #minError = calculateError(measuredData, fittedCurve);
     step = 0.2;
-    '''
+    
     for i1 in np.arange(0.0, 1.0, step):
         for i2 in np.arange(0.0, 1.0, step):
             print('check point i2')
@@ -46,23 +63,7 @@ def main():
                                                                 writer = csv.writer(file)
                                                                 writer.writerows(bestBases)
                                                             return
-    '''
-    upBound = [1.2 for i in range(len(B4))]  # initial upper bound
-    lowBound = [0 for i in range(len(B4))]   # initial lower bound
-
-
-    upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-    upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-    #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-
-    ampedB4 = [[B4[y][x] * upBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
-    upperCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
-
-    ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
-    lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
-
-    exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
-
+    
     return
 
 def findBoundaries(dataset, B4matrix, inputUpper, inputLower, inStep):
