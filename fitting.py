@@ -1,6 +1,6 @@
 import csv
 import numpy as np
-
+'''
 def main():
     B4 = generate4thorderbases()
     measuredData = {}
@@ -25,7 +25,7 @@ def main():
 
     ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
     lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
-    '''
+
     step = 0.01
     bestBases = B4
     fittedCurve = [0 for i in range(len(B4[0]))]
@@ -67,7 +67,7 @@ def main():
                     ampedB4[row][i] *= prevAmplitude
                 bestBases = ampedB4  # Update best bases
                 break  # Then exit the loop, move on to the next basis
-            '''
+
     bestFittedCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
     minError = calculateError(measuredData, bestFittedCurve)
     step = 0.1
@@ -107,6 +107,16 @@ def main():
                                                             return
 
     exportToFile(measuredData, upperCurve, lowerCurve, bestBases)
+
+    return
+'''
+def main():
+    B4 = generate4thorderbases()
+    measuredData = {}
+    with open('dataset.csv', mode='r') as file:
+        reader = csv.reader(file)
+        for rows in reader:
+            measuredData[int(float(rows[0]) * 100) + 100] = float(rows[1])
 
     return
 
