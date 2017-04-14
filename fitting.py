@@ -117,7 +117,10 @@ def main():
         reader = csv.reader(file)
         for rows in reader:
             measuredData[int(float(rows[0]) * 100) + 100] = float(rows[1])
-
+    step = 0.1
+    bestBases = B4
+    fittedCurve = [0 for i in range(len(B4[0]))]  # initial fitted curve is just a straight line 0
+    minError = calculateError(measuredData, bestFittedCurve)
     return
 
 def findBoundaries(dataset, B4matrix, inputUpper, inputLower, inStep):
