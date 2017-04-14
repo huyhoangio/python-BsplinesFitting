@@ -49,7 +49,7 @@ def main():
 
     # SHRINKING phase
 
-    ampArray = [(i - 25*step) for i in ampArray]
+    ampArray = [(i - 30*step) for i in ampArray]
     for i in range(len(ampArray)):
         if ampArray[i] < 0:
             ampArray[i] = 0
