@@ -1,24 +1,22 @@
 import csv
 import numpy as np
-'''
+
 def main():
     B4 = generate4thorderbases()
     measuredData = {}
     with open('dataset.csv', mode='r') as file:
         reader = csv.reader(file)
         for rows in reader:
-            measuredData[int(float(rows[0])*100)+100] = float(rows[1])
+            measuredData[int(float(rows[0])*100)+200] = float(rows[1])
     #print(measuredData)
 
     
-    upBound = [1.0 for i in range(len(B4))]  # initial upper bound
+    upBound = [1.2 for i in range(len(B4))]  # initial upper bound
     lowBound = [0 for i in range(len(B4))]   # initial lower bound
 
     step = 0.2;
 
     upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-    #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-    #upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
 
     ampedB4 = [[B4[y][x] * upBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
     upperCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
@@ -26,48 +24,43 @@ def main():
     ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
     lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
 
+    # GROWING phase
     step = 0.01
     bestBases = B4
-    fittedCurve = [0 for i in range(len(B4[0]))]
-
-    ampedB4 = [[0 for x in range(len(B4[0]))] for y in range(len(B4))]
-    for row in range(0, len(B4)):
-    #for row in range(0,5):
-        rowLength = len(B4[0])
-        print "current bases: ", row
-        #for amplitude in np.arange(lowBound[row], upBound[row], step):
-        for amplitude in np.arange(0, upBound[row], step):
-            #print("amplitude: ", amplitude)
-            # Update amplitude of the current basis (row)
-
+    fittedCurve = [0 for i in range(len(B4[0]))]  #Init fitted curve is a horizontal line of 0
+    minError = calculateError(measuredData, fittedCurve)
+    ampedB4 = [[0.0 for x in range(len(B4[0]))] for y in range(len(B4))]
+    ampArray = [0.0 for i in range(len(B4))]
+    rowLength = len(B4[0])
+    for row in range(len(B4) - 1):
+        print "current basis: ", row + 1
+        # rollbackstep = 0
+        minError = sum(measuredData.values())
+        for amplitude in np.arange(0.0, 1.2, step):
             for i in range(rowLength):
                 ampedB4[row][i] = B4[row][i]*amplitude
+            #fittedCurve = [sum(row[i] for row in ampedB4) for i in range(rowLength)]
 
-            #ampedB4[row] = [i*amplitude for i in ampedB4[row]] # Update amplitude
-            fittedCurve = [sum(row[i] for row in ampedB4) for i in range(rowLength)]
-            newError = calculateError(measuredData, fittedCurve)
-
+            newError = calculateError(measuredData, ampedB4[row])
             if newError < minError:
                 minError = newError
-                #print("new min error: ", minError)
+                ampArray[row] = amplitude
+            # elif newError > (minError*1.10):
+            #     break
 
-            elif newError > (minError*1.05):
-            #elif newError > minError:
-                prevAmplitude = amplitude - step
-                for i in range(rowLength):  # Roll back amplitude one step
-                    ampedB4[row][i] *= prevAmplitude
+    # SHRINKING phase
 
-                bestBases = ampedB4 # Update best bases
+    ampArray = [(i - 20*step) for i in ampArray]
+    for i in range(len(ampArray)):
+        if ampArray[i] < 0:
+            ampArray[i] = 0
+    bestBases = [[B4[y][x] * ampArray[y] for x in range(len(B4[0]))] for y in range(len(B4))]
+    fittedCurve = [sum(row[i] for row in bestBases) for i in range(len(bestBases[0]))]
+    # currentError = calculateError(measuredData, fittedCurve)
 
-                break # Then exit the loop, move on to the next basis
+    bestBases.append(fittedCurve)
 
-            if checkIfLarger(measuredData, fittedCurve):
-                prevAmplitude = amplitude - step
-                for i in range(rowLength):  # Roll back amplitude one step
-                    ampedB4[row][i] *= prevAmplitude
-                bestBases = ampedB4  # Update best bases
-                break  # Then exit the loop, move on to the next basis
-
+    '''
     bestFittedCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
     minError = calculateError(measuredData, bestFittedCurve)
     step = 0.1
@@ -105,10 +98,11 @@ def main():
                                                             exportToFile(measuredData, upperCurve, lowerCurve, bestBases)
                                                             print "limit iterations exceed"
                                                             return
-
+    '''
     exportToFile(measuredData, upperCurve, lowerCurve, bestBases)
 
     return
+
 '''
 def main():
     B4 = generate4thorderbases()
@@ -120,9 +114,14 @@ def main():
     step = 0.1
     bestBases = B4
     fittedCurve = [0 for i in range(len(B4[0]))]  # initial fitted curve is just a straight line 0
-    minError = calculateError(measuredData, bestFittedCurve)
-    return
+    minError = calculateError(measuredData, fittedCurve)
+    amplitude = [0.0 for x in range(len(B4))]
+    for row in range(len(B4)):
+        for amp in np.arange(0.1, 1.0, step):
+            amplitude = []
 
+    return
+'''
 def findBoundaries(dataset, B4matrix, inputUpper, inputLower, inStep):
     # To return lower and upper boundary to speed up convergence
     outUpper = inputUpper
@@ -163,7 +162,7 @@ def calculateError(dataDict, fittedValue):
     error = 0
     for key in dataDict:
         #error = error + abs(dataDict.get(key) - fittedValue[key])
-        error = error + (dataDict.get(key) - fittedValue[key])
+        error = error + abs(dataDict.get(key) - fittedValue[key])
     return error
 
 #def multAmplitude(amplitudeArr, basesArray):
@@ -217,19 +216,19 @@ def generatenextorderbasis(currentBasis, order, TC, T, numOfBases, maxCol):
 
 def exportToFile(measuredData, upBound, lowBound, basis):
     file = open('out.csv', 'w')
-
-    for i in range(len(upBound)):
-        file.write(str(upBound[i]))
-        if i != len(upBound) - 1:
-            file.write(',')
-        else:
-            file.write('\n')
-    for i in range(len(lowBound)):
-        file.write(str(lowBound[i]))
-        if i != len(lowBound) - 1:
-            file.write(',')
-        else:
-            file.write('\n')
+    #
+    # for i in range(len(upBound)):
+    #     file.write(str(upBound[i]))
+    #     if i != len(upBound) - 1:
+    #         file.write(',')
+    #     else:
+    #         file.write('\n')
+    # for i in range(len(lowBound)):
+    #     file.write(str(lowBound[i]))
+    #     if i != len(lowBound) - 1:
+    #         file.write(',')
+    #     else:
+    #         file.write('\n')
 
     writer = csv.writer(file)
     writer.writerows(basis)
