@@ -11,7 +11,7 @@ def main():
     #print(measuredData)
 
     
-    upBound = [1.2 for i in range(len(B4))]  # initial upper bound
+    upBound = [1.0 for i in range(len(B4))]  # initial upper bound
     lowBound = [0 for i in range(len(B4))]   # initial lower bound
 
     step = 0.2;
@@ -25,14 +25,52 @@ def main():
 
     ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
     lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
-
-    
-
-    bestBases = ampedB4
-    fittedCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
-    minError = calculateError(measuredData, fittedCurve);
-    
+    '''
     step = 0.01
+    bestBases = B4
+    fittedCurve = [0 for i in range(len(B4[0]))]
+
+    ampedB4 = [[0 for x in range(len(B4[0]))] for y in range(len(B4))]
+    for row in range(0, len(B4)):
+    #for row in range(0,5):
+        rowLength = len(B4[0])
+        print "current bases: ", row
+        #for amplitude in np.arange(lowBound[row], upBound[row], step):
+        for amplitude in np.arange(0, upBound[row], step):
+            #print("amplitude: ", amplitude)
+            # Update amplitude of the current basis (row)
+
+            for i in range(rowLength):
+                ampedB4[row][i] = B4[row][i]*amplitude
+
+            #ampedB4[row] = [i*amplitude for i in ampedB4[row]] # Update amplitude
+            fittedCurve = [sum(row[i] for row in ampedB4) for i in range(rowLength)]
+            newError = calculateError(measuredData, fittedCurve)
+
+            if newError < minError:
+                minError = newError
+                #print("new min error: ", minError)
+
+            elif newError > (minError*1.05):
+            #elif newError > minError:
+                prevAmplitude = amplitude - step
+                for i in range(rowLength):  # Roll back amplitude one step
+                    ampedB4[row][i] *= prevAmplitude
+
+                bestBases = ampedB4 # Update best bases
+
+                break # Then exit the loop, move on to the next basis
+
+            if checkIfLarger(measuredData, fittedCurve):
+                prevAmplitude = amplitude - step
+                for i in range(rowLength):  # Roll back amplitude one step
+                    ampedB4[row][i] *= prevAmplitude
+                bestBases = ampedB4  # Update best bases
+                break  # Then exit the loop, move on to the next basis
+            '''
+    bestFittedCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
+    minError = calculateError(measuredData, bestFittedCurve)
+    step = 0.1
     counter = 0
     for i1 in np.arange(lowBound[0], upBound[0], step):
         for i2 in np.arange(lowBound[1], upBound[1], step):
@@ -57,21 +95,18 @@ def main():
                                                         counter = counter + 1
                                                         if currentError < minError:
                                                             counter = 0;
-                                                            print('new error: ', minError)
+                                                            #print('new error: ', minError)
                                                             minError = currentError #update minerror
                                                             fittedCurve = currentFittedCurve
                                                             bestBases = ampedB4
                                                             bestBases.append(fittedCurve)
-                                                            '''
-                                                            with open("b4.csv", "wb") as file:
-                                                                writer = csv.writer(file)
-                                                                writer.writerows(bestBases)
-                                                            '''
-                                                        elif counter > 2000:
-                                                            exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
+
+                                                        elif counter > 1000:
+                                                            exportToFile(measuredData, upperCurve, lowerCurve, bestBases)
+                                                            print "limit iterations exceed"
                                                             return
 
-    exportToFile(measuredData, upperCurve, lowerCurve, ampedB4)
+    exportToFile(measuredData, upperCurve, lowerCurve, bestBases)
 
     return
 
@@ -113,8 +148,9 @@ def checkIfLarger(dataset, ampedBspline):
 
 def calculateError(dataDict, fittedValue):
     error = 0
-    for x,y in dataDict.items():
-        error += abs(y - fittedValue[int(x)])
+    for key in dataDict:
+        #error = error + abs(dataDict.get(key) - fittedValue[key])
+        error = error + (dataDict.get(key) - fittedValue[key])
     return error
 
 #def multAmplitude(amplitudeArr, basesArray):
@@ -168,7 +204,7 @@ def generatenextorderbasis(currentBasis, order, TC, T, numOfBases, maxCol):
 
 def exportToFile(measuredData, upBound, lowBound, basis):
     file = open('out.csv', 'w')
-    '''
+
     for i in range(len(upBound)):
         file.write(str(upBound[i]))
         if i != len(upBound) - 1:
@@ -181,11 +217,10 @@ def exportToFile(measuredData, upBound, lowBound, basis):
             file.write(',')
         else:
             file.write('\n')
-    '''
-    for i in range(len(basis[len(basis) - 1])):
-        file.write(str(basis[len(basis) - 1][i]))
-        file.write(',')
-    file.write('\n')
+
+    writer = csv.writer(file)
+    writer.writerows(basis)
+
     for i in range(len(upBound)):
         if i not in measuredData:
             file.write('')
