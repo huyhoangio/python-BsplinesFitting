@@ -101,7 +101,7 @@ def main():
                                                             bestBases = ampedB4
                                                             bestBases.append(fittedCurve)
 
-                                                        elif counter > 1000:
+                                                        elif counter > 100000:
                                                             exportToFile(measuredData, upperCurve, lowerCurve, bestBases)
                                                             print "limit iterations exceed"
                                                             return
