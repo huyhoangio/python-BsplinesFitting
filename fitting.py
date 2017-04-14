@@ -7,7 +7,7 @@ def main():
     with open('dataset.csv', mode='r') as file:
         reader = csv.reader(file)
         for rows in reader:
-            measuredData[int(float(rows[0])*100)+200] = float(rows[1])
+            measuredData[int(float(rows[0])*100)+100] = float(rows[1])
     #print(measuredData)
 
     
@@ -34,7 +34,7 @@ def main():
     rowLength = len(B4[0])
     for row in range(len(B4) - 1):
         print "current basis: ", row + 1
-        # rollbackstep = 0
+
         minError = sum(measuredData.values())
         for amplitude in np.arange(0.0, 1.2, step):
             for i in range(rowLength):
@@ -45,12 +45,11 @@ def main():
             if newError < minError:
                 minError = newError
                 ampArray[row] = amplitude
-            # elif newError > (minError*1.10):
-            #     break
+
 
     # SHRINKING phase
 
-    ampArray = [(i - 20*step) for i in ampArray]
+    ampArray = [(i - 25*step) for i in ampArray]
     for i in range(len(ampArray)):
         if ampArray[i] < 0:
             ampArray[i] = 0
