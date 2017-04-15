@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6d54bb0-1609-4a38-9711-061e4171d00c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fitting.py" afterPath="$PROJECT_DIR$/fitting.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,11 +21,11 @@
       <file leaf-file-name="fitting.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fitting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="51" column="23" lean-forward="false" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
+            <state relative-caret-position="90">
+              <caret line="50" column="29" lean-forward="false" selection-start-line="50" selection-start-column="29" selection-end-line="50" selection-end-column="29" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <element signature="e#2237#5175#1" expanded="false" />
+                <element signature="e#2464#5402#1" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -315,7 +316,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#2237#5175#1" expanded="false" />
+            <element signature="e#2464#5402#1" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -326,7 +327,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#2237#5175#1" expanded="false" />
+            <element signature="e#2464#5402#1" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -337,18 +338,18 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#2237#5175#1" expanded="false" />
+            <element signature="e#2464#5402#1" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fitting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="51" column="23" lean-forward="false" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
+        <state relative-caret-position="90">
+          <caret line="50" column="29" lean-forward="false" selection-start-line="50" selection-start-column="29" selection-end-line="50" selection-end-column="29" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#2237#5175#1" expanded="false" />
+            <element signature="e#2464#5402#1" expanded="false" />
           </folding>
         </state>
       </provider>

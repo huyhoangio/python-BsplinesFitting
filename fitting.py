@@ -7,22 +7,22 @@ def main():
     with open('dataset.csv', mode='r') as file:
         reader = csv.reader(file)
         for rows in reader:
-            measuredData[int(float(rows[0])*100)+100] = float(rows[1])
+            measuredData[int(float(rows[0])*100)+200] = float(rows[1])
     #print(measuredData)
 
     
-    upBound = [1.2 for i in range(len(B4))]  # initial upper bound
-    lowBound = [0 for i in range(len(B4))]   # initial lower bound
+    # upBound = [1.4 for i in range(len(B4))]  # initial upper bound
+    # lowBound = [0 for i in range(len(B4))]   # initial lower bound
 
-    step = 0.2;
-
-    upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
-
-    ampedB4 = [[B4[y][x] * upBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
-    upperCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
-
-    ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
-    lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
+    # step = 0.2;
+    #
+    # upBound, lowBound, step = findBoundaries(measuredData, B4, upBound, lowBound, step)
+    #
+    # ampedB4 = [[B4[y][x] * upBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
+    # upperCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
+    #
+    # ampedB4 = [[B4[y][x] * lowBound[y] for x in range(len(B4[0]))] for y in range(len(B4))]
+    # lowerCurve = [sum(row[i] for row in ampedB4) for i in range(len(ampedB4[0]))]
 
     # GROWING phase
     step = 0.01
@@ -48,14 +48,18 @@ def main():
 
 
     # SHRINKING phase
-
-    ampArray = [(i - 30*step) for i in ampArray]
-    for i in range(len(ampArray)):
-        if ampArray[i] < 0:
-            ampArray[i] = 0
-    bestBases = [[B4[y][x] * ampArray[y] for x in range(len(B4[0]))] for y in range(len(B4))]
-    fittedCurve = [sum(row[i] for row in bestBases) for i in range(len(bestBases[0]))]
-    # currentError = calculateError(measuredData, fittedCurve)
+    newError = minError - 0.01
+    while newError < minError:
+        minError = newError
+        #ampArray = [(i - step) for i in ampArray]
+        for i in range(1, len(ampArray)):
+            ampArray[i] = ampArray[i] - step
+        for i in range(len(ampArray)):
+            if ampArray[i] < 0:
+                ampArray[i] = 0
+        bestBases = [[B4[y][x] * ampArray[y] for x in range(len(B4[0]))] for y in range(len(B4))]
+        fittedCurve = [sum(row[i] for row in bestBases) for i in range(len(bestBases[0]))]
+        newError = calculateError(measuredData, fittedCurve)
 
     bestBases.append(fittedCurve)
 
@@ -98,7 +102,7 @@ def main():
                                                             print "limit iterations exceed"
                                                             return
     '''
-    exportToFile(measuredData, upperCurve, lowerCurve, bestBases)
+    exportToFile(measuredData, bestBases)
 
     return
 
